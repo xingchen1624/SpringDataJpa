@@ -26,8 +26,16 @@ import javax.persistence.*;
 @Entity
 @Table(name = "cst_customer")
 public class Customer {
+    /**
+     * ALT+C 给变量方法加注释
+     * spring data jpa主键生成策略主要有如下几种
+     * strategy = GenerationType.IDENTITY ； 自动增长，数据库要支持自动增长
+     * strategy = GenerationType.TABLE ：使用一个特定的数据库表格来保存主键
+     * strategy = GenerationType.AUTO ：主键由程序控制
+     * strategy = GenerationType.SEQUENCE ：由序列生成主键，数据库要支持序列
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  //主键生成策略
+    @GeneratedValue(strategy = GenerationType.AUTO)  //主键生成策略
     @Column(name = "cust_id")
     private Long id;
 
