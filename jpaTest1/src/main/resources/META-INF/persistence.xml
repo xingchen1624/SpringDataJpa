@@ -29,7 +29,9 @@
             <!-- 显示sql-->
             <property name="hibernate.show_sql" value="true"/>
             <!-- 自动创建数据库表-->
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <!-- 格式化SQL-->
+            <property name="hibernate.format_sql" value="true"/>
 
         </properties>
     </persistence-unit>

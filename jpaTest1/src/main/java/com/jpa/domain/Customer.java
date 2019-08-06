@@ -35,7 +35,7 @@ public class Customer {
      * strategy = GenerationType.SEQUENCE ：由序列生成主键，数据库要支持序列
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)  //主键生成策略
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  //主键生成策略
     @Column(name = "cust_id")
     private Long id;
 
