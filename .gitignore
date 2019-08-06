@@ -7,6 +7,7 @@
 *.iml
 out
 gen
+jpaTest1/target/
 
 # Compiled class file
 *.class
@@ -34,4 +35,5 @@ hs_err_pid*
 
 #测试忽略某个文件
 #发现该文件变为灰色，使用git status看不到该文件，也就不用commit
-/src/com/test/git/TestIgnore.java
+#/src/com/test/git/TestIgnore.java
+
