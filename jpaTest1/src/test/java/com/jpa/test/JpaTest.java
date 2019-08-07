@@ -26,9 +26,9 @@ import java.util.List;
  * @since 1.0.0
  */
 public class JpaTest {
-    EntityManagerFactory entityManagerFactory = null;
-    EntityTransaction transaction = null;
-    EntityManager entityManager = null;
+    private EntityManagerFactory entityManagerFactory = null;
+    private EntityTransaction transaction = null;
+    private EntityManager entityManager = null;
 
     /**
      * 功能描述: <br>
@@ -182,6 +182,7 @@ public class JpaTest {
             transaction = entityManager.getTransaction();
             transaction.begin(); //开启事务
             //完成查询操作
+            //jpql查询全部有如下两种写法
             //String jpql = "select c from Customer c";
             String jpql = "from Customer";
             Query query = entityManager.createQuery(jpql);
@@ -202,4 +203,167 @@ public class JpaTest {
             entityManager.close();
         }
     }
+
+    /*
+     * 功能描述:查询客户信息并按客户id倒序排列 <br>
+     * @Author lzc
+     * @Description
+     * @Date 20:12 2019/8/7
+     * @Param []
+     * @return void
+     * sql:select * from cst_customer order by id desc
+     * jpql:from Customer order by id desc
+     **/
+    @Test
+    public void testJpqlQueryOrder(){
+        try {
+            //通过实体管理类工厂获取实体管理器
+            entityManager = JpaUtil.getEntityManager();
+            //获取事务对象，开启事务
+            transaction = entityManager.getTransaction();
+            transaction.begin(); //开启事务
+            //完成查询操作
+            String jpql = "from Customer order by id desc";
+            Query query = entityManager.createQuery(jpql);
+
+            //发送查询，并封装结果
+            List resultList = query.getResultList();
+
+            for (Object obj : resultList){
+                System.out.println(obj);
+            }
+
+            //事务提交或回滚
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * 功能描述: 统计客户的总人数<br>
+     * @Author lzc
+     * @Description
+     * @Date 20:24 2019/8/7
+     * @Param []
+     * @return void
+     * sql:select count(cust_id) from cst_customer
+     * jpql:select count(id) from Customer
+     **/
+    @Test
+    public void testJpqlCount(){
+        try {
+            //通过实体管理类工厂获取实体管理器
+            entityManager = JpaUtil.getEntityManager();
+            //获取事务对象，开启事务
+            transaction = entityManager.getTransaction();
+            transaction.begin(); //开启事务
+            //完成查询操作
+            String jpql = "select count(id) from Customer";
+            //创建Query查询对象
+            Query query = entityManager.createQuery(jpql);
+
+            //发送查询，并封装结果
+            Object singleResult = query.getSingleResult();  //得到唯一结果
+
+            System.out.println("客户总人数 = " + singleResult);
+
+            //事务提交或回滚
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * 功能描述: 分页查询客户<br>
+     * @Author lzc
+     * @Description
+     * @Date 20:28 2019/8/7
+     * @Param []
+     * @return void
+     * sql:select * from cst_customer limit ?,?
+     **/
+    @Test
+    public void testJpqlPage(){
+        try {
+            //通过实体管理类工厂获取实体管理器
+            entityManager = JpaUtil.getEntityManager();
+            //获取事务对象，开启事务
+            transaction = entityManager.getTransaction();
+            transaction.begin(); //开启事务
+            //完成查询操作
+            String jpql = "from Customer";
+            //创建Query查询对象
+            Query query = entityManager.createQuery(jpql);
+            //设置分页对象
+            query.setFirstResult(1);  //起始索引
+            query.setMaxResults(3);  //每页查询条数
+
+            //发送查询，并封装结果
+            List resultList = query.getResultList();
+
+            for (Object o : resultList) {
+                System.out.println("o = " + o);
+            }
+
+            //事务提交或回滚
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    /**
+     * 功能描述: 条件查询 - 查询客户名称以'张'开头的客户<br>
+     * @Author lzc
+     * @Description
+     * @Date 20:51 2019/8/7
+     * @Param []
+     * @return void
+     * sql:select * from cst_customer where cust_name like '%张%'
+     * jpql同样支持占位符
+     * jpql:from Customer where custName like ?
+     **/
+    @Test
+    public void testJpqlWhere(){
+        try {
+            //通过实体管理类工厂获取实体管理器
+            entityManager = JpaUtil.getEntityManager();
+            //获取事务对象，开启事务
+            transaction = entityManager.getTransaction();
+            transaction.begin(); //开启事务
+            //完成查询操作
+            String jpql = "from Customer where custName like ?";
+            //创建Query查询对象
+            Query query = entityManager.createQuery(jpql);
+            //对占位符进行赋值,占位符索引位置从1开始
+            query.setParameter(1,"%张%");
+
+            //发送查询，并封装结果
+            List resultList = query.getResultList();
+
+            for (Object o : resultList) {
+                System.out.println("o = " + o);
+            }
+
+            //事务提交或回滚
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+    }
+
 }
