@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+		    http://www.springframework.org/schema/context
+		    http://www.springframework.org/schema/context/spring-context.xsd
+		    http://www.springframework.org/schema/data/jpa
+            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <!-- 1.配置自动扫描的包 -->
+    <context:component-scan base-package="com.jpa"></context:component-scan>
+
+    <!-- 2.dataSource 配置数据库连接池-->
+    <!-- 配置 C3P0 数据源 -->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="driverClass" value="${jdbc.driverClass}"></property>
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+    </bean>
+
+    <!-- 3.配置entityManagerFactory -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 使用spring扫描实体类 -->
+        <property name="packagesToScan" value="com.jpa.entity" />
+        <!--
+            也可以使用如下方式
+            <property name="packagesToScan" >
+                <array>
+                    <value>com.jpa.entity</value>
+                </array>
+            </property>
+        -->
+        <!-- 用于指定持久化实现厂商类 - 这里指定为hibernate -->
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+        </property>
+
+        <!--JPA的供应商适配器-->
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <!-- 配置是否自动创建数据库表 -->
+                <property name="generateDdl" value="false" />
+                <!-- 指定数据库类型 -->
+                <property name="database" value="MYSQL" />
+                <!-- 数据库方言 -->
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
+                <!-- 是否显示sql -->
+                <property name="showSql" value="true" />
+            </bean>
+        </property>
+
+        <!--配置jpa属性-->
+        <property name="jpaProperties">
+            <props>
+                <!--上面jpaVendorAdapter中配置了某些属性，这里就不用配置了-->
+                <!--<prop key="hibernate.show_sql">true</prop>-->
+                <prop key="hibernate.format_sql">true</prop>
+                <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
+
+            </props>
+        </property>
+
+        <!--
+        还有一个这样的配置，jpaProperties中的配置默认会放到jpaPropertyMap中。当然实际只配置两者
+        中的一个即可
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.query.substitutions" value="true 1, false 0" />
+                <entry key="hibernate.default_batch_fetch_size" value="16" />
+                <entry key="hibernate.max_fetch_depth" value="2" />
+                <entry key="hibernate.generate_statistics" value="true" />
+                <entry key="hibernate.bytecode.use_reflection_optimizer" value="true" />
+                <entry key="hibernate.cache.use_second_level_cache" value="false" />
+                <entry key="hibernate.cache.use_query_cache" value="false" />
+            </map>
+        </property>
+        -->
+
+        <!-- 配置jpa方言 ： 高级特性-->
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+    </bean>
+
+    <!--
+        4.整合spring data jpa
+        base-package:dao层接口对应的包
+        transaction-manager-ref:事务管理器
+        entity-manager-factory-ref:spring data jpa的实体管理器
+     -->
+    <jpa:repositories base-package="com.jpa.dao" transaction-manager-ref="transactionManager"
+                      entity-manager-factory-ref="entityManagerFactory"/>
+
+    <!--5.配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!--
+        6.配置声明式事务
+        当然我们这里只是简单使用spring data jpa，并没有service层。所以这里事务省略不配置
+        具体配置如下
+    -->
+    <!--
+        <tx:advice id="txAdvice" transaction-manager="transactionManager">
+            <tx:attributes>
+                <tx:method name="save*" propagation="REQUIRED"/>
+                <tx:method name="insert*" propagation="REQUIRED"/>
+                <tx:method name="update*" propagation="REQUIRED"/>
+                <tx:method name="delete*" propagation="REQUIRED"/>
+                <tx:method name="get*" read-only="true"/>
+                <tx:method name="find*" read-only="true"/>
+                <tx:method name="*" propagation="REQUIRED"/>
+            </tx:attributes>
+        </tx:advice>
+        <aop:config>
+            <aop:pointcut id="pointcut" expression="execution(* cn.itcast.service.*.*(..))" />
+            <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+        </aop:config>
+    -->
+
+</beans>
