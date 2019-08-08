@@ -8,6 +8,7 @@
 out
 gen
 jpaTest1/target/
+jpaTest2/target/
 
 # Compiled class file
 *.class
