@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -115,5 +116,54 @@ public class CustomerDaoTest {
         for (Customer customer : customers) {
             System.out.println("customer = " + customer);
         }
+    }
+
+    /**
+     * 功能描述:查询全部客户数 <br>
+     * @Author lzc
+     * @Description
+     * @Date 20:45 2019/8/12
+     * @Param []
+     * @return void
+     **/
+    @Test
+    public void testCount(){
+        long count = customerDao.count();
+        System.out.println("count = " + count);
+    }
+    
+    /**
+     * 功能描述:判断某个客户是否存在 <br>
+     * @Author lzc
+     * @Description
+     * @Date 20:49 2019/8/12
+     * @Param []
+     * @return void
+     **/
+    @Test
+    public void testExist(){
+        boolean exists = customerDao.exists(3L);
+        System.out.println("exists = " + exists);
+    }
+    
+    /**
+     * 功能描述: <br>
+     * @Author lzc
+     * @Description //TODO
+     * @Date 21:07 2019/8/12
+     * @Param []
+     * @return void
+     *
+     * 其中@Transactional用来保证该方法正常加载，不加会报错
+     * findOne方法：
+     *      em.find() : 立即加载
+     * getOne方法：
+     *      em.getReference() : 延迟加载
+     **/
+    @Test
+    @Transactional
+    public void testGetOne(){
+        Customer one = customerDao.getOne(2L);
+        System.out.println("one = " + one);
     }
 }
