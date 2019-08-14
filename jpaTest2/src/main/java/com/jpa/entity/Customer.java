@@ -11,6 +11,8 @@
 package com.jpa.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -45,6 +47,28 @@ public class Customer {
 
     @Column(name = "cust_address")
     private String custAddress;
+
+    //客户持有的联系人/**
+    //     * 使用注解配置一对多关系
+    //     *  1.声明关系
+    //     *      一的一方使用 @OneToMany配置一对多关系
+    //     *          targetEntity：关联的多的一方的class
+    //     *  2.配置外键
+    //     *      @JoinColumn ：配置外键
+    //     *          name:外键字段名称
+    //     *          referencedColumnName : 参照的主表的字段名称
+    //     **/集合
+
+    /**
+     * 一的一方放弃外键的维护，交由多的一方维护
+     *      mappedBy:交给多的一方的属性 ‘customer’来维护外键关系
+     *
+     * cascade:设置级联操作
+     **/
+//    @OneToMany(targetEntity = LinkMan.class)
+//    @JoinColumn(name = "lkm_cust_id",referencedColumnName = "cust_id")
+    @OneToMany(mappedBy = "customer",cascade=CascadeType.ALL)
+    private Set<LinkMan> linkManSet = new HashSet<LinkMan>();
 
     public Long getCustId() {
         return custId;
@@ -100,6 +124,14 @@ public class Customer {
 
     public void setCustAddress(String custAddress) {
         this.custAddress = custAddress;
+    }
+
+    public Set<LinkMan> getLinkManSet() {
+        return linkManSet;
+    }
+
+    public void setLinkManSet(Set<LinkMan> linkManSet) {
+        this.linkManSet = linkManSet;
     }
 
     @Override

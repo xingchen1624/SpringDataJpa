@@ -45,6 +45,13 @@
         <!--JPA的供应商适配器-->
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+
+                <!--
+                hbm2ddl与generateddl的区别是：
+                <property name="generateDdl" value="true" />
+                相当于
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                 -->
                 <!-- 配置是否自动创建数据库表 -->
                 <property name="generateDdl" value="false" />
                 <!-- 指定数据库类型 -->
@@ -56,13 +63,15 @@
             </bean>
         </property>
 
-        <!--配置jpa属性-->
+        <!--
+            配置jpa属性或者jpa的实现方（hibernate）的某些属性
+        -->
         <property name="jpaProperties">
             <props>
                 <!--上面jpaVendorAdapter中配置了某些属性，这里就不用配置了-->
                 <!--<prop key="hibernate.show_sql">true</prop>-->
                 <prop key="hibernate.format_sql">true</prop>
-                <!--<prop key="hibernate.hbm2ddl.auto">validate</prop>-->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
 
             </props>
         </property>
