@@ -63,11 +63,12 @@ public class Customer {
      * 一的一方放弃外键的维护，交由多的一方维护
      *      mappedBy:交给多的一方的属性 ‘customer’来维护外键关系
      *
-     * cascade:设置级联操作
+     * cascade:设置级联操作  CascadeType.ALL表示所有操作都使用级联
+     * fetch ：加载策略  FetchType.EAGER立即加载  LAZY:延迟加载。一般建议使用延迟加载
      **/
 //    @OneToMany(targetEntity = LinkMan.class)
 //    @JoinColumn(name = "lkm_cust_id",referencedColumnName = "cust_id")
-    @OneToMany(mappedBy = "customer",cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "customer",cascade=CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<LinkMan> linkManSet = new HashSet<LinkMan>();
 
     public Long getCustId() {
